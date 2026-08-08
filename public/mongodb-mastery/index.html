@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MongoDB Mastery — Interactive MongoDB Learning Platform</title>
+<meta name="description" content="Learn MongoDB from beginner to expert: CRUD, operators, aggregation, indexes, schema design, Mongoose, PyMongo, playground and 300 practice questions." />
+<link rel="stylesheet" href="style.css" />
+<script src="script.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ============ TOP NAV ============ -->
+<header class="topbar">
+  <button class="icon-btn only-mobile" id="menuBtn" aria-label="Open navigation" aria-expanded="false">☰</button>
+
+  <a class="logo" href="#/home" aria-label="MongoDB Mastery home">
+    <span class="logo-leaf" aria-hidden="true">🍃</span>
+    <span class="logo-text"><b>MongoDB</b><i>MASTERY</i></span>
+  </a>
+
+  <div class="search-wrap">
+    <input id="searchInput" class="search-input" type="search" role="combobox" aria-expanded="false"
+           aria-controls="searchResults" autocomplete="off"
+           placeholder="🔍  Search MongoDB topics, operators, questions…" aria-label="Search MongoDB topics" />
+    <kbd class="kbd only-desktop">Ctrl K</kbd>
+    <div id="searchResults" class="search-results" role="listbox" hidden></div>
+  </div>
+
+  <div class="topbar-right">
+    <div class="progress-pill only-desktop" title="Your learning progress">
+      <span>Progress</span>
+      <b id="progressPct">0%</b>
+    </div>
+    <button class="icon-btn" id="themeBtn" aria-label="Toggle color theme" title="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<div class="shell">
+  <!-- ============ SIDEBAR ============ -->
+  <nav class="sidebar" id="sidebar" aria-label="Topic navigation">
+    <div class="sidebar-top">
+      <button class="side-link" data-route="#/home">🏠 Home</button>
+      <button class="side-link" data-route="#/playground">▶️ Query Playground</button>
+      <button class="side-link" data-route="#/operators">🧩 Operator Explorer</button>
+      <button class="side-link" data-route="#/aggregation-visualizer">🔗 Pipeline Visualizer</button>
+      <button class="side-link" data-route="#/index-visualizer">⚡ Index Visualizer</button>
+      <button class="side-link" data-route="#/schema-visualizer">🏗️ Schema Visualizer</button>
+      <button class="side-link" data-route="#/compass">🧭 Compass Guide</button>
+      <button class="side-link" data-route="#/practice">🎯 Practice (300)</button>
+      <button class="side-link" data-route="#/interview">💼 Interview</button>
+      <button class="side-link" data-route="#/cheatsheet">📋 Cheat Sheet</button>
+      <button class="side-link" data-route="#/roadmap">🗺️ Roadmap</button>
+      <button class="side-link" data-route="#/plan30">📅 30-Day Plan</button>
+      <button class="side-link" data-route="#/bookmarks">🔖 Bookmarks</button>
+    </div>
+    <div id="sidebarTree" class="sidebar-tree"></div>
+  </nav>
+  <div class="scrim" id="scrim" hidden></div>
+
+  <!-- ============ MAIN ============ -->
+  <main id="main" class="main" tabindex="-1"></main>
+</div>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="logo"><span class="logo-leaf">🍃</span><span class="logo-text"><b>MongoDB</b><i>MASTERY</i></span></div>
+      <p class="muted">Learn MongoDB.<br />Build real projects.<br />Become production-ready.</p>
+    </div>
+    <div>
+      <h4>Learning</h4>
+      <button class="link-btn" data-route="#/topic/t1">Documentation</button>
+      <button class="link-btn" data-route="#/practice">Practice</button>
+      <button class="link-btn" data-route="#/interview">Interview</button>
+      <button class="link-btn" data-route="#/cheatsheet">Cheat Sheet</button>
+    </div>
+    <div>
+      <h4>Tools</h4>
+      <button class="link-btn" data-route="#/playground">Query Playground</button>
+      <button class="link-btn" data-route="#/operators">Operator Explorer</button>
+      <button class="link-btn" data-route="#/compass">Compass Guide</button>
+      <button class="link-btn" data-route="#/project">Student Mgmt Project</button>
+    </div>
+    <div>
+      <h4>Progress</h4>
+      <button class="link-btn" data-route="#/bookmarks">Bookmarks</button>
+      <button class="link-btn" data-route="#/plan30">30-Day Plan</button>
+      <button class="link-btn" id="resetBtn">Reset Progress</button>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>Built for B.Tech CSE Students</span>
+    <span>© 2026 MongoDB Mastery</span>
+  </div>
+</footer>
+</body>
+</html>
