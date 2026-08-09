@@ -1,24 +1,30 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "MongoDB Mastery — Interactive MongoDB Learning Platform" },
+      {
+        name: "description",
+        content:
+          "Learn MongoDB end to end: CRUD, operators, aggregation, indexes, schema design, Mongoose, PyMongo, a query playground and 300 practice questions.",
+      },
+      { property: "og:type", content: "website" },
+      {
+        property: "og:title",
+        content: "MongoDB Mastery — Interactive MongoDB Learning Platform",
+      },
+      {
+        property: "og:description",
+        content:
+          "Interactive MongoDB course: playground, visualizers, cheat sheet, roadmap and 300 practice questions.",
+      },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  beforeLoad: () => {
+    throw redirect({ href: "/mongodb-mastery/index.html" });
+  },
+  component: () => null,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
