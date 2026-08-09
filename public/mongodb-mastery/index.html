@@ -20,7 +20,7 @@
     <span class="logo-text"><b>MongoDB</b><i>MASTERY</i></span>
   </a>
 
-  <div class="search-wrap">
+  <div class="search-wrap" id="searchWrap">
     <input id="searchInput" class="search-input" type="search" role="combobox" aria-expanded="false"
            aria-controls="searchResults" autocomplete="off"
            placeholder="🔍  Search MongoDB topics, operators, questions…" aria-label="Search MongoDB topics" />
@@ -29,6 +29,7 @@
   </div>
 
   <div class="topbar-right">
+    <button class="icon-btn only-mobile" id="searchBtn" aria-label="Open search" aria-expanded="false">🔍</button>
     <div class="progress-pill only-desktop" title="Your learning progress">
       <span>Progress</span>
       <b id="progressPct">0%</b>
@@ -40,6 +41,10 @@
 <div class="shell">
   <!-- ============ SIDEBAR ============ -->
   <nav class="sidebar" id="sidebar" aria-label="Topic navigation">
+    <div class="sidebar-head only-mobile">
+      <span class="logo-text"><b>MongoDB</b><i>MASTERY</i></span>
+      <button class="icon-btn" id="closeDrawerBtn" aria-label="Close navigation">✕</button>
+    </div>
     <div class="sidebar-top">
       <button class="side-link" data-route="#/home">🏠 Home</button>
       <button class="side-link" data-route="#/playground">▶️ Query Playground</button>
