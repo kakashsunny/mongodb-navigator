@@ -463,17 +463,8 @@ function initializeNavigation() {
       $$(".tabpanel", wrap).forEach(p => (p.hidden = p.dataset.panel !== tab.dataset.tab));
     }
   });
-  $("#menuBtn").addEventListener("click", () => ($("#sidebar").classList.contains("open") ? closeDrawer() : openDrawer()));
+  $("#menuBtn").addEventListener("click", openDrawer);
   $("#scrim").addEventListener("click", closeDrawer);
-  $("#closeDrawerBtn")?.addEventListener("click", closeDrawer);
-  $("#searchBtn")?.addEventListener("click", () => {
-    const w = $("#searchWrap"), open = w.classList.toggle("open");
-    $("#searchBtn").setAttribute("aria-expanded", String(open));
-    if (open) setTimeout(() => $("#searchInput").focus(), 30);
-  });
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape") { closeDrawer(); $("#searchWrap")?.classList.remove("open"); }
-  });
   $("#resetBtn").addEventListener("click", () => {
     if (confirm("Reset all progress, bookmarks, notes and quiz scores?")) {
       Object.keys(localStorage).filter(k => k.startsWith("mm_") && k !== "mm_theme").forEach(k => localStorage.removeItem(k));
@@ -482,8 +473,8 @@ function initializeNavigation() {
   });
   window.addEventListener("hashchange", render);
 }
-function openDrawer() { $("#sidebar").classList.add("open"); $("#scrim").hidden = false; document.body.classList.add("no-scroll"); $("#menuBtn").setAttribute("aria-expanded", "true"); }
-function closeDrawer() { $("#sidebar").classList.remove("open"); $("#scrim").hidden = true; document.body.classList.remove("no-scroll"); $("#menuBtn").setAttribute("aria-expanded", "false"); }
+function openDrawer() { $("#sidebar").classList.add("open"); $("#scrim").hidden = false; $("#menuBtn").setAttribute("aria-expanded", "true"); }
+function closeDrawer() { $("#sidebar").classList.remove("open"); $("#scrim").hidden = true; $("#menuBtn").setAttribute("aria-expanded", "false"); }
 
 /* ========================= SEARCH ========================= */
 function searchIndex() {
