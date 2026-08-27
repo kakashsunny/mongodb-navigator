@@ -7,6 +7,7 @@
 <meta name="description" content="Learn MongoDB from beginner to expert: CRUD, operators, aggregation, indexes, schema design, Mongoose, PyMongo, playground and 300 practice questions." />
 <link rel="icon" type="image/png" href="/favicon.png" />
 <link rel="stylesheet" href="style.css" />
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js" defer></script>
 <script src="script.js" defer></script>
 </head>
 <body>
@@ -34,6 +35,7 @@
       <span>Progress</span>
       <b id="progressPct">0%</b>
     </div>
+    <button class="icon-btn" id="exportPdfBtn" aria-label="Export progress report as PDF" title="Export progress report (PDF)">📄</button>
     <button class="icon-btn" id="themeBtn" aria-label="Toggle color theme" title="Toggle theme">🌙</button>
   </div>
 </header>
@@ -88,6 +90,7 @@
       <h4>Progress</h4>
       <button class="link-btn" data-route="#/bookmarks">Bookmarks</button>
       <button class="link-btn" data-route="#/plan30">30-Day Plan</button>
+      <button class="link-btn" id="exportPdfBtn2">Export PDF Report</button>
       <button class="link-btn" id="resetBtn">Reset Progress</button>
     </div>
   </div>
