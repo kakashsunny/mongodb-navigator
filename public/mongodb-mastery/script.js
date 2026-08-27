@@ -1290,3 +1290,144 @@ function initializeApp() {
   progress.render();
 }
 initializeApp();
+
+/* ===================== PDF EXPORT ====================== */
+function buildReportData() {
+  const done = progress.done();
+  const doneSet = new Set(done);
+  const quiz = store.get("quiz", { correct: 0, wrong: 0 });
+  const attempts = quiz.correct + quiz.wrong;
+  const byCat = GROUPS.map(([cat]) => {
+    const items = TOPICS.filter(t => t.cat === cat);
+    const d = items.filter(t => doneSet.has(t.id)).length;
+    return { cat, done: d, total: items.length };
+  });
+  const noteTopics = TOPICS.filter(t => (notes.get(t.id) || "").trim().length);
+  return {
+    done, quiz, attempts,
+    accuracy: attempts ? Math.round((quiz.correct / attempts) * 100) : 0,
+    pct: Math.round((done.length / TOPICS.length) * 100),
+    byCat,
+    bookmarks: TOPICS.filter(t => marks.has(t.id)),
+    doneTopics: TOPICS.filter(t => doneSet.has(t.id)),
+    notes: noteTopics.map(t => ({ title: t.title, text: notes.get(t.id).trim() })),
+    days: store.get("days", []).slice().sort((a, b) => a - b)
+  };
+}
+
+function exportProgressPdf() {
+  const jsPDFCtor = window.jspdf && window.jspdf.jsPDF;
+  if (!jsPDFCtor) { toast("PDF library not loaded — check your connection"); return; }
+  const r = buildReportData();
+  const doc = new jsPDFCtor({ unit: "pt", format: "a4" });
+  const W = doc.internal.pageSize.getWidth(), H = doc.internal.pageSize.getHeight();
+  const M = 48, maxW = W - M * 2;
+  let y = 0, page = 0;
+  const GREEN = [0, 160, 90], DARK = [17, 24, 33], MUTED = [110, 125, 140];
+
+  function footer() {
+    doc.setFont("helvetica", "normal").setFontSize(8).setTextColor(...MUTED);
+    doc.text("MongoDB Mastery — Progress Report", M, H - 24);
+    doc.text("Page " + page, W - M, H - 24, { align: "right" });
+  }
+  function newPage() {
+    if (page) footer();
+    doc.addPage(); page++; y = M + 10;
+  }
+  function need(h) { if (y + h > H - 50) newPage(); }
+  function heading(txt) {
+    need(40); y += 10;
+    doc.setFont("helvetica", "bold").setFontSize(13).setTextColor(...GREEN);
+    doc.text(txt, M, y); y += 6;
+    doc.setDrawColor(...GREEN).setLineWidth(.8).line(M, y, W - M, y);
+    y += 16;
+  }
+  function line(txt, opts = {}) {
+    const size = opts.size || 10, indent = opts.indent || 0;
+    doc.setFont("helvetica", opts.bold ? "bold" : "normal").setFontSize(size)
+       .setTextColor(...(opts.color || DARK));
+    const parts = doc.splitTextToSize(String(txt), maxW - indent);
+    parts.forEach(p => { need(size + 6); doc.text(p, M + indent, y); y += size + 4; });
+  }
+  function table(rows) {
+    rows.forEach(([a, b]) => {
+      need(18);
+      doc.setFont("helvetica", "normal").setFontSize(10).setTextColor(...DARK);
+      doc.text(String(a), M + 4, y);
+      doc.setFont("helvetica", "bold").setTextColor(...GREEN);
+      doc.text(String(b), W - M - 4, y, { align: "right" });
+      doc.setDrawColor(225).setLineWidth(.5).line(M, y + 5, W - M, y + 5);
+      y += 18;
+    });
+  }
+  function bar(pct) {
+    need(18);
+    const w = maxW, h = 9;
+    doc.setFillColor(230).roundedRect(M, y, w, h, 4, 4, "F");
+    if (pct > 0) doc.setFillColor(...GREEN).roundedRect(M, y, Math.max(w * pct / 100, 4), h, 4, 4, "F");
+    y += h + 12;
+  }
+
+  // Cover
+  page = 1; y = M + 20;
+  doc.setFillColor(11, 15, 20).rect(0, 0, W, 150, "F");
+  doc.setFont("helvetica", "bold").setFontSize(26).setTextColor(0, 237, 100);
+  doc.text("MongoDB Mastery", M, 76);
+  doc.setFont("helvetica", "normal").setFontSize(13).setTextColor(200, 210, 220);
+  doc.text("Learning Progress & Quiz Report", M, 102);
+  doc.setFontSize(9).setTextColor(150, 165, 180);
+  doc.text("Generated " + new Date().toLocaleString(), M, 126);
+  y = 190;
+
+  heading("Overall Progress");
+  line(`${r.done.length} of ${TOPICS.length} topics completed (${r.pct}%)`, { bold: true, size: 12 });
+  y += 4; bar(r.pct);
+  table([
+    ["Topics completed", `${r.done.length} / ${TOPICS.length}`],
+    ["Completion", r.pct + "%"],
+    ["Bookmarked topics", r.bookmarks.length],
+    ["Topics with notes", r.notes.length],
+    ["30-day plan days done", `${r.days.length} / 30`]
+  ]);
+
+  heading("Quiz Results");
+  if (!r.attempts) {
+    line("No quiz attempts recorded yet. Visit Practice (300) to start.", { color: MUTED });
+  } else {
+    table([
+      ["Questions attempted", r.attempts],
+      ["Correct answers", r.quiz.correct],
+      ["Wrong answers", r.quiz.wrong],
+      ["Accuracy", r.accuracy + "%"]
+    ]);
+    y += 4; bar(r.accuracy);
+  }
+
+  heading("Progress by Category");
+  table(r.byCat.map(c => [c.cat, `${c.done} / ${c.total}  (${Math.round(c.done / c.total * 100)}%)`]));
+
+  heading("Completed Topics");
+  if (!r.doneTopics.length) line("None yet.", { color: MUTED });
+  r.doneTopics.forEach((t, i) => line(`${i + 1}. ${t.title}  —  ${t.cat}`, { indent: 6 }));
+
+  heading("Bookmarks");
+  if (!r.bookmarks.length) line("No bookmarks saved.", { color: MUTED });
+  r.bookmarks.forEach((t, i) => line(`${i + 1}. ${t.title}  —  ${t.cat}`, { indent: 6 }));
+
+  heading("My Notes");
+  if (!r.notes.length) line("No notes saved.", { color: MUTED });
+  r.notes.forEach(n => {
+    line(n.title, { bold: true });
+    line(n.text, { indent: 10, color: MUTED });
+    y += 6;
+  });
+
+  footer();
+  const stamp = new Date().toISOString().slice(0, 10);
+  doc.save(`mongodb-mastery-progress-${stamp}.pdf`);
+  toast("PDF report downloaded");
+}
+
+document.addEventListener("click", e => {
+  if (e.target.closest("#exportPdfBtn,#exportPdfBtn2")) exportProgressPdf();
+});
